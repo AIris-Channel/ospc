@@ -10,4 +10,3 @@ Official Website: https://ospc.aisingapore.org/
 - model_outputs: the model we trained
 - logs: the logs folder
 - datas: the data we used
-
