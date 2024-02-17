@@ -9,4 +9,4 @@ Official Website: https://ospc.aisingapore.org/
 - models: the softlink to our used pretrain models
 - model_outputs: the model we trained
 - logs: the logs folder
-- datas: the data we used
+- datasets: the data we used
