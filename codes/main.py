@@ -1,12 +1,10 @@
 import sys
-import logging
+original_stdout = sys.stdout
+sys.stdout = sys.stderr
 from llava_phi import process_image
 
 
-logging.getLogger().setLevel(logging.CRITICAL)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     for line in sys.stdin:
         image_path = line.rstrip()
         try:
@@ -15,6 +13,6 @@ if __name__ == "__main__":
                 label = 1
             else:
                 label = 0
-            sys.stdout.write(f"{proba:.4f}\t{label}\n")
+            original_stdout.write(f'{proba:.4f}\t{label}\n')
         except Exception as e:
             sys.stderr.write(str(e))
