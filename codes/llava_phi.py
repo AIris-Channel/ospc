@@ -9,7 +9,7 @@ from moellava.mm_utils import tokenizer_image_token, get_model_name_from_path, K
 
 
 disable_torch_init()
-user_msg = 'First, identify the text in the image. Then, describe the content of the image. Finally, rate its humor level on a scale from 0 (not funny) to 10 (very funny).'
+user_msg = 'Is it an offensive meme?'
 model_path = 'MoE-LLaVA-Phi2-2.7B-4e-384'  # LanguageBind/MoE-LLaVA-Qwen-1.8B-4e or LanguageBind/MoE-LLaVA-StableLM-1.6B-4e
 device = 'cuda'
 load_4bit, load_8bit = False, False  # FIXME: Deepspeed support 4bit or 8bit?
@@ -43,9 +43,14 @@ def process_image(image_path):
             stopping_criteria=[stopping_criteria])
 
     outputs = tokenizer.decode(output_ids[0, input_ids.shape[1]:], skip_special_tokens=True).strip()
-    scales = re.findall(r'\d+', outputs)
-    if scales:
-        return int(scales[-1]) / 10
+
+    outputs_lower = outputs.lower()
+    yes_index = outputs_lower.find('yes')
+    no_index = outputs_lower.find('no')
+    if yes_index > no_index:
+        return 0
+    elif yes_index < no_index:
+        return 1
     return 0.5
 
 
