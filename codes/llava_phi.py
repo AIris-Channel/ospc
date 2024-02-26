@@ -6,7 +6,8 @@ from moellava.conversation import conv_templates, SeparatorStyle
 from moellava.model.builder import load_pretrained_model
 from moellava.utils import disable_torch_init
 from moellava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
-
+from torch.nn.functional import softmax
+import os,time
 
 disable_torch_init()
 user_msg = 'Is it an offensive meme?'
@@ -17,7 +18,7 @@ model_name = get_model_name_from_path(model_path)
 tokenizer, model, processor, context_len = load_pretrained_model(model_path, None, model_name, load_8bit, load_4bit, device=device)
 image_processor = processor['image']
 conv_mode = "phi"  # qwen or stablelm
-
+temperature = 0.2
 
 def process_image(image_path):
     conv = conv_templates[conv_mode].copy()
@@ -33,26 +34,55 @@ def process_image(image_path):
     stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
 
     with torch.inference_mode():
-        output_ids = model.generate(
-            input_ids,
+        model_inputs = model.prepare_inputs_for_generation(input_ids,
             images=image_tensor,
             do_sample=True,
             temperature=0.2,
             max_new_tokens=1024,
             use_cache=True,
             stopping_criteria=[stopping_criteria])
+        output = model(**model_inputs, return_dict=True)
+        logits = output.logits[:, -1, :]  # 获取最后一个token的logits
 
-    outputs = tokenizer.decode(output_ids[0, input_ids.shape[1]:], skip_special_tokens=True).strip()
+    yes_id = tokenizer.convert_tokens_to_ids('Yes')
+    no_id = tokenizer.convert_tokens_to_ids('No')
 
-    outputs_lower = outputs.lower()
-    yes_index = outputs_lower.find('yes')
-    no_index = outputs_lower.find('no')
-    if yes_index > no_index:
-        return 0
-    elif yes_index < no_index:
-        return 1
-    return 0.5
+    # 提取对应于"yes"和"no"的logits
+    yes_logits = logits[:, yes_id] / temperature
+    no_logits = logits[:, no_id] / temperature
+
+    # 将logits转换为概率
+    probs = softmax(torch.stack((yes_logits, no_logits)), dim=0)
+
+    return probs[0].item()
+
 
 
 if __name__ == '__main__':
-    print(process_image('muslim.jpg'))
+    # test_image_sets = '../local_test/test_images/'
+    
+    test_image_sets = '/mnt/f/Downloads/TD_Memes/TD_Memes'
+    # 确保路径正确
+    if not os.path.exists(test_image_sets):
+        print(f"Directory {test_image_sets} does not exist.")
+    else:
+        __import__('ipdb').set_trace()
+        # 列出目录中的所有文件
+        image_files = [f for f in os.listdir(test_image_sets) if os.path.isfile(os.path.join(test_image_sets, f))]
+        
+        for image_file in image_files:
+            image_path = os.path.join(test_image_sets, image_file)
+            
+            # 开始计时
+            start_time = time.time()
+            
+            # 处理图片并计算需要的信息
+            print(f"Processing {image_file}...")
+            process_result = process_image(image_path)
+            
+            # 结束计时
+            end_time = time.time()
+            
+            # 打印处理结果和处理时间
+            print(f"Processed {image_file} in {end_time - start_time} seconds. Result: {process_result}")
+
