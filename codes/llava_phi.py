@@ -8,6 +8,7 @@ from moellava.utils import disable_torch_init
 from moellava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
 from torch.nn.functional import softmax
 import os,time
+from classifier import Classifier
 
 disable_torch_init()
 user_msg = 'Is it an offensive meme?'
@@ -19,6 +20,9 @@ tokenizer, model, processor, context_len = load_pretrained_model(model_path, Non
 image_processor = processor['image']
 conv_mode = "phi"  # qwen or stablelm
 temperature = 0.2
+
+c_model = Classifier(2560, 512, 2).to(device)
+c_model.load_state_dict(torch.load('classifier.pth'))
 
 def process_image(image_path):
     conv = conv_templates[conv_mode].copy()
@@ -41,18 +45,11 @@ def process_image(image_path):
             max_new_tokens=1024,
             use_cache=True,
             stopping_criteria=[stopping_criteria])
-        output = model(**model_inputs, return_dict=True)
-        logits = output.logits[:, -1, :]  # 获取最后一个token的logits
-
-    yes_id = tokenizer.convert_tokens_to_ids('Yes')
-    no_id = tokenizer.convert_tokens_to_ids('No')
-
-    # 提取对应于"yes"和"no"的logits
-    yes_logits = logits[:, yes_id] / temperature
-    no_logits = logits[:, no_id] / temperature
-
-    # 将logits转换为概率
-    probs = softmax(torch.stack((yes_logits, no_logits)), dim=0)
+        output = model(**model_inputs, output_hidden_states=True, return_dict=True)
+        hidden_states = output.hidden_states[-1][0, -1]
+        logits = output.logits[0, -1]
+        probs = c_model(hidden_states.unsqueeze(0).to(device, dtype=torch.float32))
+        probs = probs.squeeze()
 
     return probs[0].item()
 
@@ -61,12 +58,12 @@ def process_image(image_path):
 if __name__ == '__main__':
     # test_image_sets = '../local_test/test_images/'
     
-    test_image_sets = '/mnt/f/Downloads/TD_Memes/TD_Memes'
+    test_image_sets = '../datasets/hateful_memes/img'
     # 确保路径正确
     if not os.path.exists(test_image_sets):
         print(f"Directory {test_image_sets} does not exist.")
     else:
-        __import__('ipdb').set_trace()
+        # __import__('ipdb').set_trace()
         # 列出目录中的所有文件
         image_files = [f for f in os.listdir(test_image_sets) if os.path.isfile(os.path.join(test_image_sets, f))]
         
