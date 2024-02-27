@@ -47,4 +47,4 @@ if __name__ == '__main__':
             gts.append(json.loads(line)['label'])
     auroc = calculate_auroc(probs, gts)
     acc = calculate_accuracy(answers, gts)
-    print(f'AUROC: {auroc:.4f}\nAccuracy: {acc}')
+    print(f'AUROC: {auroc:.4f}\nAccuracy: {acc:.4f}')
