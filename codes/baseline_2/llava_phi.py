@@ -1,4 +1,4 @@
-import os, json
+import os, sys, json
 import torch
 from PIL import Image, ImageOps
 from moellava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN
@@ -7,12 +7,10 @@ from moellava.model.builder import load_pretrained_model
 from moellava.utils import disable_torch_init
 from moellava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
 
-if os.path.exists('baseline_2'):
-    from .classifier import Classifier
-    c_model_path = 'baseline_2/classifier.pth'
-else:
-    from classifier import Classifier
-    c_model_path = 'classifier.pth'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+from classifier import Classifier
+c_model_path = os.path.join(current_dir, 'classifier.pth')
 
 disable_torch_init()
 user_msg = 'Is it an offensive meme?'
@@ -64,7 +62,7 @@ if __name__ == '__main__':
     hidden_size = 512
     num_classes = 2
     batch_size = 32
-    data_path = '../../datasets/hateful_memes'
+    data_path = '../../benchmark/benchmark_fb_en'
     probs = []
     labels = []
     val_targets = []
