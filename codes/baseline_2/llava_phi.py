@@ -62,7 +62,7 @@ if __name__ == '__main__':
     hidden_size = 512
     num_classes = 2
     batch_size = 32
-    data_path = '../../benchmark/benchmark_fb_en'
+    data_path = '../benchmark/benchmark_fb_en'
     probs = []
     labels = []
     val_targets = []
