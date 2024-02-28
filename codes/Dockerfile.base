@@ -1,0 +1,26 @@
+FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+
+RUN apt update && apt upgrade -y
+# RUN apt install -y git libgl1-mesa-glx libglib2.0-0
+RUN apt-get install -y gcc g++
+
+# use conda install cuda-compiler
+RUN conda install -c nvidia cuda-compiler
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy your Python script into the container at /app
+COPY ./MoE-LLaVA/ /app/MoE-LLaVA
+COPY ./MoE-LLaVA-Phi2-2.7B-4e-384/ /app/MoE-LLaVA-Phi2-2.7B-4e-384
+COPY ./cache_dir/ /app/cache_dir
+# Change working directory to Moe-LLaVA and install it
+WORKDIR /app/MoE-LLaVA
+RUN pip install -e .
+RUN pip install -e ".[train]"
+# Change back to the original work directory if needed
+WORKDIR /app
+
+# Install python requirements
+# RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python3", "main.py"]
