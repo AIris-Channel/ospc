@@ -164,3 +164,8 @@ cython_debug/
 datasets/
 models/
 model_outputs/
+/data
+/ezmt2en
+/trnmt
+/trocr
+/trocr_ezmt
