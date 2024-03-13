@@ -2,6 +2,7 @@ import os, sys, json
 from PIL import Image
 import torch
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+import sentencepiece as spm
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
@@ -11,6 +12,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_path = f'{current_dir}/trocr_weights'
 processor = TrOCRProcessor.from_pretrained(model_path)
 vocab = processor.tokenizer.get_vocab()
+
+sp = spm.SentencePieceProcessor()
+sp.Load(f'{current_dir}/trocr_weights/sentencepiece.bpe.model')
 
 vocab_inp = {vocab[key]: key for key in vocab}
 model = VisionEncoderDecoderModel.from_pretrained(model_path)
@@ -28,10 +32,8 @@ def decode_text(tokens, vocab, vocab_inp):
     unk = vocab.get('<unk>')
     pad = vocab.get('<pad>')
     text = ''
-    for tk in tokens:
-        if tk not in [s_end, s_start , pad, unk]:
-           text += vocab_inp[tk]
-    text = text.replace('▁', ' ').strip()
+    tokens = [tk.item() - 1 for tk in tokens if tk not in [s_end, s_start , pad, unk]]
+    text = sp.DecodeIds(tokens)
     return text
 
 
