@@ -29,7 +29,7 @@ model = make_model(src_vocab_size, tgt_vocab_size, n_layers,
 model.load_state_dict(torch.load(f'{current_dir}/nmt_model.pth'))
 model.eval()
 
-max_len = 100
+max_len = 50
 padding_idx = 0
 bos_idx = 1
 eos_idx = 2
