@@ -12,7 +12,7 @@ from trocr import recognize_image
 from nmt import translate_sentence
 from blip import blip_caption
 
-model_path = '../Qwen1.5-14B-Chat-GPTQ-Int4'
+model_path = f'{current_dir}/../Qwen1.5-14B-Chat-GPTQ-Int4'
 device = 'cuda'
 torch.set_default_device(device)
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
