@@ -5,7 +5,7 @@ from transformers import BlipProcessor, BlipForConditionalGeneration
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-model_path = f'{current_dir}/blip-image-captioning-large'
+model_path = f'{current_dir}/../blip-image-captioning-large'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 processor = BlipProcessor.from_pretrained(model_path)
 model = BlipForConditionalGeneration.from_pretrained(model_path, torch_dtype=torch.float16).to(device)
