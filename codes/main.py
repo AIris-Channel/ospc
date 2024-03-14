@@ -1,7 +1,7 @@
 import sys
 original_stdout = sys.stdout
 sys.stdout = sys.stderr
-from baseline_2 import process_image
+from baseline_5 import process_image
 
 
 def find_percent(num_list, percent):
