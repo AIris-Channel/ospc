@@ -24,8 +24,8 @@ def process_image(image_path):
     image = ImageOps.exif_transpose(Image.open(image_path)).convert('RGB')
     caption = blip_caption(image)
     text = recognize_image(image)
-    if re.search(r'[\u0b80-\u0bff]', text):
-        text = translate_sentence(text)
+    # if re.search(r'[\u0b80-\u0bff]', text):
+    text = translate_sentence(text)
     system_prompt = 'You are a helpful assistant.'
     # usr_msg = f'There is {caption}. The text on the image is "{text}". Is it an offensive meme?'
     usr_msg2 = f'Racial Disparities: Memes perpetuating stereotypes or prejudices based on race or ethnicity.\nReligious Beliefs and Practices: Memes that mock or demean specific religions or religious practices.\nSexual Orientation: Memes that promotes negative stereotypes or biases about different sexual orientations.\nNationalistic Sentiments and Xenophobia: Memes that foster negative attitudes towards migrants or glorify extreme nationalistic views.\nSocio Economic Divides: Memes that highlights or ridicules class struggles and socio-economic disparities.\nAge-Related Biases: Memes perpetuating stereotypes or biases based on a person\'s age.\nGender Discrimination: Memes that promotes gender stereotypes or discriminates based on gender.\nDiscrimination Based on Illnesses and Disabilities: Memes that mock or belittle individuals with illnesses or disabilities.\n\nThere is {caption}. The text on the image is "{text}". Is it a meme that contain the above social biases or otherwise portraying in a negative light the above categories?'
