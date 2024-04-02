@@ -1,0 +1,4 @@
+auto-gptq
+optimum
+paddlepaddle-gpu==2.5.1
+paddleocr==2.7.3
