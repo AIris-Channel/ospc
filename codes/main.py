@@ -1,7 +1,6 @@
 import sys
 original_stdout = sys.stdout
 sys.stdout = sys.stderr
-from baseline_7 import process_image, caption_image, end_caption
 
 
 def find_percent(num_list, percent):
@@ -15,6 +14,7 @@ def find_percent(num_list, percent):
 
 
 if __name__ == '__main__':
+    from baseline_7.blip_ocr import caption_image, end_caption
     probs = []
     tasks = []
     for line in sys.stdin:
@@ -27,6 +27,7 @@ if __name__ == '__main__':
     
     end_caption()
 
+    from baseline_7.qwen import process_image
     for caption, text in tasks:
         try:
             prob = process_image(caption, text)
