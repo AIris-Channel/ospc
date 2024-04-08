@@ -5,7 +5,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 
 ocr = PaddleOCR(det_model_dir=f'{current_dir}/ch_PP-OCRv4_det_server_infer',
-                rec_model_dir=f'{current_dir}/ch_PP-OCRv4_rec_server_infer')
+                rec_model_dir=f'{current_dir}/ch_PP-OCRv4_rec_server_infer',
+                cls_model_dir=f'{current_dir}/ch_ppocr_mobile_v2.0_cls_infer')
 
 
 def recognize_image(image_path):

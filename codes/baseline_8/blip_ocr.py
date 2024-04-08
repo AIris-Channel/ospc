@@ -16,9 +16,9 @@ from blip import blip_caption, end_blip
 def caption_image(image_path):
     image = ImageOps.exif_transpose(Image.open(image_path)).convert('RGB')
     caption = blip_caption(image)
-    # text, text_prob = recognize_image_pd(image_path)
-    # if text_prob < 0.9:
-    text = recognize_image(image)
+    text, text_prob = recognize_image_pd(image_path)
+    if text_prob < 0.9:
+        text = recognize_image(image)
     if re.search(r'[\u0b80-\u0bff]', text):
         text = translate_sentence(text)
     return caption, text
