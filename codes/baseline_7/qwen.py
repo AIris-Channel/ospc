@@ -19,7 +19,7 @@ temperature = 5
 
 def process_image(caption, text):
     system_prompt = ''
-    usr_msg = f'Racial Disparities: Memes perpetuating stereotypes or prejudices based on race or ethnicity.\nReligious Beliefs and Practices: Memes that mock or demean specific religions or religious practices.\nSexual Orientation: Memes that promotes negative stereotypes or biases about different sexual orientations.\nNationalistic Sentiments and Xenophobia: Memes that foster negative attitudes towards migrants or glorify extreme nationalistic views.\nSocio Economic Divides: Memes that highlights or ridicules class struggles and socio-economic disparities.\nAge-Related Biases: Memes perpetuating stereotypes or biases based on a person\'s age.\nGender Discrimination: Memes that promotes gender stereotypes or discriminates based on gender.\nDiscrimination Based on Illnesses and Disabilities: Memes that mock or belittle individuals with illnesses or disabilities.\n\nThere is {caption}. The text on the image is "{text}". Is it a meme that contain the above social biases? ("Yes" or "No")'
+    usr_msg = f'There is {caption}. The text on the image is "{text}". Is it an offensive meme? ("Yes" or "No")'
     prompt = f'<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{usr_msg}<|im_end|>\n<|im_start|>assistant\n'
     inputs = tokenizer(prompt, return_tensors='pt', return_attention_mask=False)
 

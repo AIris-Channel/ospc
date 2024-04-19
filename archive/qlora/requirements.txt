@@ -1,0 +1,10 @@
+transformers==4.38.2
+accelerate
+tiktoken
+einops
+transformers_stream_generator==0.0.4
+scipy
+auto-gptq
+optimum
+peft<0.8.0
+deepspeed

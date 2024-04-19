@@ -1,0 +1,9 @@
+torch
+datasets
+transformers==4.38.2
+scikit-learn
+jiwer==2.3.0
+python-Levenshtein==0.12.2
+pillow==9.5
+sentencepiece
+accelerate==0.27.2

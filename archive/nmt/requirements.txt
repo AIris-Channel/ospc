@@ -1,0 +1,5 @@
+torch
+numpy
+sacrebleu==1.4.14
+tqdm
+sentencepiece

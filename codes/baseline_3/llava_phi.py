@@ -66,11 +66,12 @@ def process_image(image_path):
 
 if __name__ == '__main__':
     import time
-    data_path = '../benchmark/benchmark_fb_en'
+    from utils import find_percent, calculate_auroc, calculate_accuracy
+    data_path = '../benchmark/benchmark_cherrypick'
     probs = []
     labels = []
     val_targets = []
-    with open(f'{data_path}/dev.jsonl', 'r') as f:
+    with open(f'{data_path}/img.jsonl', 'r') as f:
         for line in f:
             data = json.loads(line)
             start = time.time()
@@ -78,3 +79,12 @@ if __name__ == '__main__':
             probs.append(prob)
             end = time.time()
             print(prob, 'time:', end - start)
+            val_targets.append(data['label'])
+
+    threshold = find_percent(probs, 0.5)
+    for prob in probs:
+        labels.append(1 if prob > threshold else 0)
+
+    auroc = calculate_auroc(probs, val_targets)
+    acc = calculate_accuracy(labels, val_targets)
+    print(f'AUROC: {auroc:.4f}\nAccuracy: {acc:.4f}')
